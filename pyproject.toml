@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rubric-scorer"
+version = "0.1.0"
+description = "Rubric-based scoring for AI/LLM outputs, built from real RLHF and hallucination-annotation workflows."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Samir Omar Delgadillo Casillas", email = "delgadillo.samir.omar@gmail.com" }
+]
+keywords = ["llm", "rlhf", "evaluation", "rubric", "hallucination", "annotation", "ai-safety"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.scripts]
+rubric-score = "rubric_scorer.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["rubric_scorer*"]
