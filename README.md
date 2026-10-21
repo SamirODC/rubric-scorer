@@ -52,11 +52,25 @@ print(result.normalized_score)  # 0.0 — hard fail overrides everything else
 print(result.failed_criteria)   # ['no_fabricated_citation']
 ```
 
+`normalized_score` uses a **0–100** scale. The library scores supplied boolean
+judgments; it does not call an LLM, verify medical facts, or automatically detect
+hallucinations. Hallucination labels are explicitly supplied by the evaluator.
+The clinical-QA examples are illustrative test data, not medical advice or
+patient records.
+
+True judgments add their criterion's weight; a negative-weight criterion is a
+penalty when true. Missing judgments count as false and are recorded in the
+result notes. Failed hard-fail criteria and critical annotations force zero.
+Empty rubrics, rubrics without positive weights, unknown criterion ids, and
+non-boolean judgments are rejected. Criterion predicates are not executed by
+this API.
+
 ## CLI
 
 ```bash
 rubric-score score --criteria examples/criteria.json --responses examples/responses.json
 rubric-score validate-criteria --criteria examples/criteria.json
+rubric-score score --criteria examples/criteria.json --responses examples/responses.json --json
 ```
 
 Example output:
@@ -71,12 +85,12 @@ resp_shaky_reasoning 56.0/100
 resp_fabricated_citation HARD FAIL
   failed: no_fabricated_citation
   note: Hard-fail criterion triggered — normalized score forced to 0 regardless of other criteria.
-  note: Critical hallucination detected — normalized score forced to 0.
+  note: Critical hallucination annotation — normalized score forced to 0.
 ```
 
 ## Hallucination annotation
 
-`rubric_scorer.hallucination` implements a 4-category taxonomy for annotating multi-step / agentic outputs, matching the categories used in production agentic-task labeling:
+`rubric_scorer.hallucination` implements a 4-category taxonomy for annotating multi-step / agentic outputs:
 
 | Category | What it catches |
 |---|---|

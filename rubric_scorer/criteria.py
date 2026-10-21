@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from math import isfinite
 from typing import Callable, Optional
 
 
@@ -53,11 +54,24 @@ class Criterion:
     predicate: Optional[Callable[[str, Optional[dict]], bool]] = None
 
     def __post_init__(self) -> None:
+        if not isinstance(self.id, str) or not self.id.strip():
+            raise ValueError("Criterion id must be a non-empty string.")
+        if not isinstance(self.description, str):
+            raise TypeError("Criterion description must be a string.")
+        if isinstance(self.weight, bool) or not isinstance(self.weight, (int, float)):
+            raise TypeError("Criterion weight must be a number, not a boolean.")
+        if not isfinite(self.weight):
+            raise ValueError("Criterion weight must be finite.")
         if not -5 <= self.weight <= 5:
             raise ValueError(
                 f"Criterion '{self.id}' weight {self.weight} out of range "
                 "(-5..+5)."
             )
+        object.__setattr__(self, "category", CriterionCategory(self.category))
+        if not isinstance(self.hard_fail, bool):
+            raise TypeError("hard_fail must be a boolean.")
+        if self.predicate is not None and not callable(self.predicate):
+            raise TypeError("predicate must be callable or None.")
 
 
 @dataclass
@@ -68,6 +82,10 @@ class CriteriaSet:
     criteria: list[Criterion] = field(default_factory=list)
 
     def add(self, criterion: Criterion) -> "CriteriaSet":
+        if not isinstance(criterion, Criterion):
+            raise TypeError("Expected a Criterion instance.")
+        if any(c.id == criterion.id for c in self.criteria):
+            raise ValueError(f"Duplicate criterion id: {criterion.id!r}.")
         self.criteria.append(criterion)
         return self
 
