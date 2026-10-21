@@ -12,7 +12,7 @@ can be flagged as a "hard fail" that overrides the numeric total.
 
 from .criteria import Criterion, CriteriaSet, CriterionCategory
 from .scorer import RubricScorer, ScoreResult
-from .hallucination import HallucinationCategory, HallucinationAnnotation
+from .hallucination import HallucinationCategory, HallucinationAnnotation, Severity
 
 __all__ = [
     "Criterion",
@@ -22,6 +22,7 @@ __all__ = [
     "ScoreResult",
     "HallucinationCategory",
     "HallucinationAnnotation",
+    "Severity",
 ]
 
 __version__ = "0.1.0"
